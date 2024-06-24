@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "my-tool-vault-app",
-    "slug": "my-tool-vault-app",
+    "slug": "my-tool-vault",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,7 +19,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -28,10 +32,25 @@
     },
     "plugins": [
       "expo-router",
-      "expo-camera" 
+      "expo-camera"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "c21256cf-8465-434c-af5c-13bf43f24c24"
+      }
+    },
+    "owner": "joey2022",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/c21256cf-8465-434c-af5c-13bf43f24c24"
     }
   }
 }
