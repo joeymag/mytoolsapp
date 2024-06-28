@@ -5,7 +5,7 @@ import Toolconponts from '../componts/Toolconponts';
 import Listoftools from '../../assets/Listoftools';
 import * as Location from 'expo-location';
 import { db } from '../../firebassConfig';
-import { collection, getDocs, query, where } from 'firebase/firestore'; // Import collection from 'firebase/firestore'
+import { collection, collectionGroup, getDocs, query, where } from 'firebase/firestore'; // Import collection from 'firebase/firestore'
 import { useAuth } from '../context/AuthContext';
 
 export default function Toolreport() {
@@ -22,7 +22,9 @@ export default function Toolreport() {
 
   useEffect(() => {
     if(user?.uid) 
+      {
     fetchProduct();
+      }
     
   }, []);
 
@@ -30,14 +32,14 @@ export default function Toolreport() {
 
     const fetchProduct = async () => {
       try {
-        const collGroupRef = collection(db, `users/${user.uid}userstools`);
-        const q = query(collGroupRef, where(mycurruser, '==', 'userId'));
+        const userToolsRef = collection(db, `users/${user.uid}/usertools`)
+         const querySnap = await getDocs(userToolsRef);
         const items = [];
-        const querySnap = await getDocs(q);
         querySnap.forEach((doc) => {
+          console.log("path is:", userToolsRef.path);
           items.push(doc.data());
         });
-        console.log(collGroupRef);
+        console.log("path is:", userToolsRef.path);
         setToolList(items);
 
   }
