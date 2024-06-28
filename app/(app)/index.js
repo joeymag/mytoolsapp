@@ -10,8 +10,9 @@ import toolslist from '../../assets/toolslist';
 import { Image } from 'expo-image';
 import { Button } from 'react-native-paper';
 import PopUp from '../componts/PopUp';
-
-
+import {  collection, getDocs, query } from 'firebase/firestore';
+import { db } from '../../firebassConfig';
+import { useAuth } from '../context/AuthContext';
 
 
 
@@ -22,16 +23,26 @@ export default function Home(props) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [radius, setRadius] = useState(4);
   const [visible, setVisible] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [locations, setLocations] = useState();
   const router = useRouter();
+  const { user } = useAuth();
+  const mycurruser = user;
 
+ const getUser =() => {
+    console.log(mycurruser);
 
+  }
+ 
 
-
+ 
 
 
 
 
   useEffect(() => {
+    getUser();
+
     (async () => {
 
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -54,6 +65,21 @@ export default function Home(props) {
     );
   }
 
+  const toollist = async () => {
+    const q = query(collection(db, 'mytools'));
+    const querySnapshot = await getDocs(q);
+    const productData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setProducts(productData);
+    console.log(productData);
+
+    
+
+  }
+
+  
 
 
 
@@ -66,7 +92,6 @@ export default function Home(props) {
 
   const reporthandler = ({ location }) => {
     router.push({ pathname: '/Toolreport', location: location })
-
 
 
 
@@ -103,14 +128,15 @@ export default function Home(props) {
         {/* van breaking markers */}
 
         {places.map((place) => (
-          <Marker
-            key={place.id}
-            coordinate={{ latitude: place.latitude, longitude: place.longitude }}>
-            <View style={styles.marker}>
-              <Image source={require('../../assets/images/van.png')} style={{ width: 50, height: 50 }} />
-            </View>
-          </Marker>
-        ))}
+                  <Marker
+                    key={place.id}
+                    coordinate={{longitude: place.longitude,  latitude: place.latitude }}>
+                    <View style={styles.marker}>
+                      <Image source={require('../../assets/images/van.png')} style={{ width: 50, height: 50 }} />
+        
+                    </View>
+                  </Marker>
+                ))}
       </MapView>
 
       <View style={styles.butioncon}>

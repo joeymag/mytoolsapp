@@ -1,20 +1,54 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image } from 'expo-image';
 import { Checkbox } from 'react-native-paper';
+import { useAuth } from '../context/AuthContext';
+import { collection, doc, getDoc, } from 'firebase/firestore';
+import { db } from '../../firebassConfig';
 
 
 export default function Toolconponts() {
     const [checked, setChecked] = useState(false);
+    const user = useAuth()
+    const userDocRef = doc(db, 'users', user.uid);
+  
 
-  const handlePress = () => {
-    console.log('pressed')
-  }
+    
+    
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const myToolsDocRef = doc(collection, 'usertools', user.uid);
+                const docSnap = await getDoc(myToolsDocRef);
+                if(docSnap.exists()) {
+                    let data = docSnap.data();
+                    console.log(data);
+    
+                }
+                else {
+                    console.log('No such document');
+                }
+    
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+    
+        };
+        fetchProducts();
+    
+    
+    }, []);
+
+
+    
+
+
 
 
 
   return (
-    <Pressable onPress={handlePress}>
+    <Pressable onPress={""}>
     <View style={styles.maincontainer}>
     <Checkbox
       status={checked ? 'checked' : 'unchecked'}
@@ -39,6 +73,7 @@ export default function Toolconponts() {
       </View>
       </View>
       
+
 
       
     </View>

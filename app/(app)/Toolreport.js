@@ -1,67 +1,95 @@
-import { View, Text, FlatList } from 'react-native'
+import { View, Text, FlatList, Button } from 'react-native'
 import React from 'react'
 import { useState, useEffect } from 'react';
 import Toolconponts from '../componts/Toolconponts';
 import Listoftools from '../../assets/Listoftools';
 import * as Location from 'expo-location';
 import { db } from '../../firebassConfig';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore'; // Import collection from 'firebase/firestore'
 import { useAuth } from '../context/AuthContext';
 
-export default function Toolreport({}) {
+export default function Toolreport() {
 
 
   const [location, setLocation] = useState(null);
   const [isslected, setIsslected] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [toolList, setToolList] = useState([]);
   const { user } = useAuth()
+  const mycurruser = user;
 
-  // user location
+
+
   useEffect(() => {
-    getusertools()
-      
-    }, []);
+    if(user?.uid) 
+    fetchProduct();
+    
+  }, []);
 
-  
+  console.log()
 
-  let text = 'Waiting..';
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location
+    const fetchProduct = async () => {
+      try {
+        const collGroupRef = collection(db, `users/${user.uid}userstools`);
+        const q = query(collGroupRef, where(mycurruser, '==', 'userId'));
+        const items = [];
+        const querySnap = await getDocs(q);
+        querySnap.forEach((doc) => {
+          items.push(doc.data());
+        });
+        console.log(collGroupRef);
+        setToolList(items);
 
-    );
   }
+  catch (error) {
+    console.log(error)
+  }
+}
 
-  
+    
 
 
 
-  // list of user tools
-  const getusertools = async () => {
-    const q = query(collection(db, "users"), where("user", "==", user.user.uid));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-    });
-     
-  
+
+  // get user geo location
+
+  // submit tool list of tools and user location to the database then be shown on the map
+
+ const getuserlocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
     }
 
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+  }
 
-
+  const submit = async () => {
+    try {
+      await addDoc(collection(firebasse_DB, "business"), {
+        addresss,
+        bussinesname,
+        phone,
+       
+      });
+        const location = await Location.getCurrentPositionAsync({});
+        setaddresss(location);
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
 
 
 
 
   return (
     <View>
-      {isslected ? <Text>selected</Text> : <Text>not selected</Text>}
-      <FlatList
-        data={Listoftools}
-        renderItem={({ item }) => <Toolconponts {...item} />}
-        keyExtractor={item => item.id.toString()}
-      />
+    <Button title="Submit" onPress={submit} />
+
+
     </View>
   )
 }

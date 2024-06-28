@@ -16,6 +16,7 @@ const MainLayout = () => {
     const inApp = segment[0] === '(app)';
     if(isAuthenticated && !inApp) {
       router.replace('/(app)')
+      
 
     }else if(isAuthenticated==false) {
 

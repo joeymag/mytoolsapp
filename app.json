@@ -23,7 +23,8 @@
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.joey2022.mytoolvault"
     },
     "web": {
       "bundler": "metro",
